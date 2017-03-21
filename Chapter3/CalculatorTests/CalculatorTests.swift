@@ -16,24 +16,6 @@ class CalculatorTests: XCTestCase {
     
     let resCalc = CalculatorModel()
     
-    var mockDateAndTime:MockDateAndTime?
-    
-    class MockDateAndTime
-    {
-        func from(_ year:Int, month:Int, day:Int) -> Date
-        {
-            var c = DateComponents()
-            c.year = year
-            c.month = month
-            c.day = day
-            
-            let gregorian = Calendar(identifier:Calendar.Identifier.gregorian)
-            let date = gregorian.date(from: c as DateComponents)
-            
-            return (date! as NSDate) as Date
-        }
-    }
-    
     func testAdd() {
         expect(self.resCalc.add(1,1)) == 2
     }
@@ -47,5 +29,13 @@ class CalculatorTests: XCTestCase {
         self.measure {
             // Put the code you want to measure the time of here.
         }
+    }
+    
+    func testMockNumbers(){
+        let mock = MockCalculatorModel().spy(on: CalculatorModel())
+        mock.a = 5
+        mock.b = 5
+        
+        XCTAssertEqual(mock.add(mock.a, mock.b), 10)
     }
 }
