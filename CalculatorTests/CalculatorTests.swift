@@ -7,26 +7,39 @@
 //
 
 import XCTest
+import Nimble
+import Cuckoo
+
 @testable import Calculator
 
 class CalculatorTests: XCTestCase {
     
-    var resCalc: CalculatorModel!
+    let resCalc = CalculatorModel()
     
-    override func setUp() {
-        super.setUp()
-        resCalc = CalculatorModel()
-    }
+    var mockDateAndTime:MockDateAndTime?
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    class MockDateAndTime
+    {
+        func from(_ year:Int, month:Int, day:Int) -> Date
+        {
+            var c = DateComponents()
+            c.year = year
+            c.month = month
+            c.day = day
+            
+            let gregorian = Calendar(identifier:Calendar.Identifier.gregorian)
+            let date = gregorian.date(from: c as DateComponents)
+            
+            return (date! as NSDate) as Date
+        }
     }
     
     func testAdd() {
-        XCTAssertEqual(resCalc.add(1, 1), 2)
-        XCTAssertEqual(resCalc.add(1, 2), 3)
-        XCTAssertEqual(resCalc.add(5, 4), 9)
+        expect(self.resCalc.add(1,1)) == 2
+    }
+    
+    func testAddRange(){
+        expect(self.resCalc.mul(4, 3)).to(satisfyAnyOf(beGreaterThan(10), beLessThan(20)))
     }
     
     func testPerformanceExample() {
@@ -35,5 +48,4 @@ class CalculatorTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-    
 }
