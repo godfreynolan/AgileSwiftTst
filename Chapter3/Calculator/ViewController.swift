@@ -25,31 +25,31 @@ class ViewController: UIViewController {
 
     @IBAction func operation(_ sender: UIButton) {
         switch op {
-            case "=":
-                res = num
-            case "+":
-                res = resCalc.add(res, num)
-            case "-":
-                res = resCalc.sub(res, num)
-            case "*":
-                res = resCalc.mul(res, num)
-            case "/":
-                res = resCalc.div(res, num)
-            default:
-                print("error")
+        case "=":
+            res = num
+        case "+":
+            res = resCalc.add(res, num)
+        case "-":
+            res = resCalc.sub(res, num)
+        case "*":
+            res = resCalc.mul(res, num)
+        case "/":
+            res = resCalc.div(res, num)
+        default:
+            print("error")
         }
 
         num = 0
         resultsFld.text = ("\(res)")
 
-        if(sender.titleLabel!.text == "=") {
+        if sender.titleLabel!.text == "=" {
             res = 0
         }
 
         op = sender.titleLabel!.text! as String!
     }
 
-    @IBAction func clear(_ sender: UIButton) {
+    @IBAction func clear(_: UIButton) {
         res = 0
         num = 0
         op = "="

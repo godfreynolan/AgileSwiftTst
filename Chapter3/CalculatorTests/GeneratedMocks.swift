@@ -1,4 +1,4 @@
-// MARK: - Mocks generated from file: Calculator/CalculatorModel.swift at 2017-03-22 18:04:39 +0000
+// MARK: - Mocks generated from file: Calculator/CalculatorModel.swift at 2017-03-22 18:15:50 +0000
 
 //
 //  CalculatorModel.swift

@@ -26,16 +26,16 @@ class CalculatorTests: XCTestCase {
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        self.measure {
+        measure {
             // Put the code you want to measure the time of here.
         }
     }
 
-//    func testMockNumbers(){
-//        let mock = MockCalculatorModel().spy(on: CalculatorModel())
-//        mock.a = 5
-//        mock.b = 5
-//        
-//        XCTAssertEqual(mock.add(mock.a, mock.b), 10)
-//    }
+    //    func testMockNumbers(){
+    //        let mock = MockCalculatorModel().spy(on: CalculatorModel())
+    //        mock.a = 5
+    //        mock.b = 5
+    //
+    //        XCTAssertEqual(mock.add(mock.a, mock.b), 10)
+    //    }
 }
