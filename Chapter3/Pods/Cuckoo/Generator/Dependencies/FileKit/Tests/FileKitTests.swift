@@ -207,7 +207,6 @@ class FileKitTests: XCTestCase {
         XCTAssertFalse(p.isChildOfPath(childOfChild, recursive: false))
         XCTAssertTrue(p.isChildOfPath(childOfChild, recursive: true))
 
-
         // common ancestor
         XCTAssertTrue(p.commonAncestor(Path.root).isRoot)
         XCTAssertEqual(.userDownloads <^> .userDocuments, Path.userHome)
@@ -263,7 +262,6 @@ class FileKitTests: XCTestCase {
         a += "Files"
         XCTAssertEqual(a, "~/Desktop/Files")
     }
-
 
     func testPathSymlinking() {
         do {
@@ -672,13 +670,11 @@ class FileKitTests: XCTestCase {
             for (kc, vc) in contents {
                 let v = dict[kc]
 
-                if let vb = v as? Bool , let vcb = vc as? Bool {
+                if let vb = v as? Bool, let vcb = vc as? Bool {
                     XCTAssertEqual(vb, vcb)
-                }
-                else if let vb = v as? String , let vcb = vc as? String {
+                } else if let vb = v as? String, let vcb = vc as? String {
                     XCTAssertEqual(vb, vcb)
-                }
-                else {
+                } else {
                     XCTFail("unknow type")
                 }
             }

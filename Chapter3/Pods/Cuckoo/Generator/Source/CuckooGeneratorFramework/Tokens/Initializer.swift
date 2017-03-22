@@ -13,6 +13,6 @@ public struct Initializer: Method {
     public let range: CountableRange<Int>
     public let nameRange: CountableRange<Int>
     public let parameters: [MethodParameter]
-    
+
     public let required: Bool
 }

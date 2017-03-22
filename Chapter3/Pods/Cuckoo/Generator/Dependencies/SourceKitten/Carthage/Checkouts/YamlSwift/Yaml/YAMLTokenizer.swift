@@ -1,6 +1,5 @@
 import Foundation
 
-
 extension Yaml {
   enum TokenType: Swift.String {
     case yamlDirective = "%YAML"
@@ -118,8 +117,7 @@ extension Yaml {
       |> Yaml.Regex.replace(Yaml.Regex.regex("\""), template: "\\\\\"")
     return "near \"\(escaped)\""
   }
-  
-  
+
   static func tokenize (_ text: String) -> Result<[TokenMatch]> {
     var text = text
     var matchList: [TokenMatch] = []
@@ -132,7 +130,7 @@ extension Yaml {
           if range.location != NSNotFound {
             let rangeend = range.location + range.length
             switch tokenPattern.type {
-              
+
             case .newLine:
               let match = text |> Yaml.Regex.substringWithRange(range)
               let lastindent = indents.last ?? 0
@@ -163,7 +161,7 @@ extension Yaml {
                 }
                 matchList.append(TokenMatch(.newLine, match))
               }
-              
+
             case .dash, .questionMark:
               let match = text |> Yaml.Regex.substringWithRange(range)
               let index = match.index(after: match.startIndex)
@@ -172,13 +170,13 @@ extension Yaml {
               matchList.append(
                 TokenMatch(tokenPattern.type, match.substring(to: index)))
               matchList.append(TokenMatch(.indent, match.substring(from: index)))
-              
+
             case .colonFO:
               if insideFlow > 0 {
                 continue
               }
               fallthrough
-              
+
             case .colonFI:
               let match = text |> Yaml.Regex.substringWithRange(range)
               matchList.append(TokenMatch(.colon, match))
@@ -186,15 +184,15 @@ extension Yaml {
                 indents.append((indents.last ?? 0) + 1)
                 matchList.append(TokenMatch(.indent, ""))
               }
-              
+
             case .openSB, .openCB:
               insideFlow += 1
               matchList.append(TokenMatch(tokenPattern.type, text |> Yaml.Regex.substringWithRange(range)))
-              
+
             case .closeSB, .closeCB:
               insideFlow -= 1
               matchList.append(TokenMatch(tokenPattern.type, text |> Yaml.Regex.substringWithRange(range)))
-              
+
             case .literal, .folded:
               matchList.append(TokenMatch(tokenPattern.type, text |> Yaml.Regex.substringWithRange(range)))
               text = text |> Yaml.Regex.substringFromIndex(rangeend)
@@ -212,7 +210,7 @@ extension Yaml {
                   ? "\n" : "")
               matchList.append(TokenMatch(.string, block))
               continue next
-              
+
             case .stringFO:
               if insideFlow > 0 {
                 continue
@@ -236,16 +234,16 @@ extension Yaml {
               }
               matchList.append(TokenMatch(.string, block))
               continue next
-              
+
             case .stringFI:
               let match = text
                 |> Yaml.Regex.substringWithRange(range)
                 |> Yaml.Regex.replace(Yaml.Regex.regex("^[ \\t]|[ \\t]$"), template: "")
               matchList.append(TokenMatch(.string, match))
-              
+
             case .reserved:
               return fail(escapeErrorContext(text))
-              
+
             default:
               matchList.append(TokenMatch(tokenPattern.type, text |> Yaml.Regex.substringWithRange(range)))
             }

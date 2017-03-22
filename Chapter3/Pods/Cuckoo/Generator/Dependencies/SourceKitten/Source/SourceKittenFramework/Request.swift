@@ -101,7 +101,7 @@ private let initializeSourceKit: Void = {
 }()
 private let initializeSourceKitFailable: Void = {
     initializeSourceKit
-    sourcekitd_set_notification_handler() { response in
+    sourcekitd_set_notification_handler { response in
         if !sourcekitd_response_is_error(response!) {
             fflush(stdout)
             fputs("sourcekitten: connection to SourceKitService restored!\n", stderr)
@@ -509,7 +509,7 @@ extension Request {
     public static func EditorOpen(_: File) -> Request { fatalError() }
 
     @available(*, unavailable, renamed: "cursorInfo(file:offset:arguments:)")
-    public static func CursorInfo(file: String, offset: Int64, arguments: [String])-> Request { fatalError() }
+    public static func CursorInfo(file: String, offset: Int64, arguments: [String]) -> Request { fatalError() }
 
     @available(*, unavailable, renamed: "customRequest(request:)")
     public static func CustomRequest(_: sourcekitd_object_t) -> Request { fatalError() }

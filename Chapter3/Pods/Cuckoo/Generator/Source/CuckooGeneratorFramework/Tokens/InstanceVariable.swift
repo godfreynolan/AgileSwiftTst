@@ -14,7 +14,7 @@ public struct InstanceVariable: Token {
     public var range: CountableRange<Int>
     public var nameRange: CountableRange<Int>
     public var overriding: Bool
-    
+
     public var readOnly: Bool {
         return setterAccessibility == nil
     }

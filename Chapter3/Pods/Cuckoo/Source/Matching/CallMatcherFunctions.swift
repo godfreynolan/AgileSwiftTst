@@ -29,5 +29,5 @@ public func atLeast(_ count: Int) -> CallMatcher {
 
 /// Returns a matcher ensuring call was made at most `count` times.
 public func atMost(_ count: Int) -> CallMatcher {
-    return CallMatcher(name: "at most \(count) times",numberOfExpectedCalls: count, compareCallsFunction: >=)
+    return CallMatcher(name: "at most \(count) times", numberOfExpectedCalls: count, compareCallsFunction: >=)
 }

@@ -60,7 +60,7 @@ public struct HelpCommand<ClientError: Error>: CommandProtocol {
 
 public struct HelpOptions<ClientError: Error>: OptionsProtocol {
 	fileprivate let verb: String?
-	
+
 	private init(verb: String?) {
 		self.verb = verb
 	}

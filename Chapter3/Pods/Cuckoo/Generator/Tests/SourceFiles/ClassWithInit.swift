@@ -9,6 +9,6 @@
 class ClassWithInit {
 
 	init(parameter: String) {
-	
+
 	}
 }

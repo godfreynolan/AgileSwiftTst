@@ -12,7 +12,7 @@ public struct MethodParameter: Token {
     public let type: String
     public let range: CountableRange<Int>
     public let nameRange: CountableRange<Int>
-    
+
     public var labelAndName: String {
         if let label = label {
             return label != name ? "\(label) \(name)" : name
@@ -20,7 +20,7 @@ public struct MethodParameter: Token {
             return "_ \(name)"
         }
     }
-    
+
     public var typeWithoutAttributes: String {
         return type.replacingOccurrences(of: "@escaping", with: "").replacingOccurrences(of: "@autoclosure", with: "").trimmed
     }

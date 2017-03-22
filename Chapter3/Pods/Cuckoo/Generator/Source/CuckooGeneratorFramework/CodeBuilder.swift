@@ -7,23 +7,23 @@
 //
 
 public class CodeBuilder {
-    
+
     fileprivate static let Tab = "    "
 
     public fileprivate(set) var code = ""
-    
+
     fileprivate var nesting = 0
-    
+
     public  func clear() {
         code = ""
     }
-    
-    public  func nest(_ closure: () -> ()) {
+
+    public  func nest(_ closure: () -> Void) {
         nesting += 1
         closure()
         nesting -= 1
     }
-    
+
     public func nest(_ line: String) {
         nest { self += line }
     }

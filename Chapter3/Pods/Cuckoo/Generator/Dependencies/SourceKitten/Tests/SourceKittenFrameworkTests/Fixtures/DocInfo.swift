@@ -1,4 +1,3 @@
-
 /// Single line commented function
 func singleLineCommentedFunc() {
 }
@@ -23,7 +22,6 @@ func nonDocCommentDocumentedFunc() {
 func nonDocCommentMultiLineDocumentedFunc() {
 }
 
-
 /// A documented struct
 struct DocumentedStruct {
   /// A documented variable.
@@ -37,4 +35,3 @@ struct DocumentedStruct {
 }
 
 /// A doc string that refers to nothing.
-

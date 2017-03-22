@@ -67,7 +67,7 @@ func failsWithErrorMessageForNil(_ message: String, file: FileString = #file, li
     }
 #endif
 
-public class NimbleHelper : NSObject {
+public class NimbleHelper: NSObject {
     public class func expectFailureMessage(_ message: NSString, block: @escaping () -> Void, file: FileString, line: UInt) {
         failsWithErrorMessage(String(describing: message), file: file, line: line, preferOriginalSourceLocation: true, closure: block)
     }

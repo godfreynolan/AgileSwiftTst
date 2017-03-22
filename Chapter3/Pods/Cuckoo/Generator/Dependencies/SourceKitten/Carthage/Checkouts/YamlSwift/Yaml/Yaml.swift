@@ -8,7 +8,7 @@ public enum Yaml {
   case string(Swift.String)
   case array([Yaml])
   case dictionary([Yaml: Yaml])
-    
+
     static public func == (lhs: Yaml, rhs: Yaml) -> Bool {
         switch (lhs, rhs) {
         case (.null, .null):
@@ -33,7 +33,7 @@ public enum Yaml {
             return false
         }
     }
-    
+
     // unary `-` operator
     static public prefix func - (value: Yaml) -> Yaml {
         switch value {
@@ -134,10 +134,8 @@ extension Yaml: Hashable {
   }
 }
 
-
-
 extension Yaml {
-  
+
   public static func load (_ text: Swift.String) throws -> Yaml {
     let result = tokenize(text) >>=- Context.parseDoc
     if let value = result.value { return value } else { throw ResultError.message(result.error) }
@@ -305,4 +303,3 @@ extension Yaml {
     }
   }
 }
-

@@ -12,7 +12,7 @@
 */
 public protocol Matchable {
     associatedtype MatchedType
-    
+
     /// Matcher for this instance. This should be an equalTo type of a matcher, but it is not required.
     var matcher: ParameterMatcher<MatchedType> { get }
 }
@@ -23,7 +23,7 @@ public extension Matchable {
             return self.matcher.matches($0) || otherMatchable.matcher.matches($0)
         }
     }
-    
+
     public func and<M>(_ otherMatchable: M) -> ParameterMatcher<MatchedType> where M: Matchable, M.MatchedType == MatchedType {
         return ParameterMatcher {
             return self.matcher.matches($0) && otherMatchable.matcher.matches($0)

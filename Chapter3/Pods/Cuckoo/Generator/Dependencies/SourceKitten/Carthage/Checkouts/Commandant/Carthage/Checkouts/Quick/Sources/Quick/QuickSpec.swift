@@ -19,9 +19,9 @@ open class QuickSpec: XCTestCase {
     }
 #endif
 
-    static var allTestsCache = [String : [(String, (XCTestCase) -> () throws -> Void)]]()
+    static var allTestsCache = [String: [(String, (XCTestCase) -> () throws -> Void)]]()
 
-    public class var allTests : [(String, (XCTestCase) -> () throws -> Void)] {
+    public class var allTests: [(String, (XCTestCase) -> () throws -> Void)] {
         if let cached = allTestsCache[String(describing: self)] {
             return cached
         }

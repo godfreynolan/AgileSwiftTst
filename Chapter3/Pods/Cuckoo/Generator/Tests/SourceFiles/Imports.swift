@@ -10,7 +10,7 @@ import c;import d
 import a; import b
 
 import     e
-import 
+import
 f
 
 import //aaa

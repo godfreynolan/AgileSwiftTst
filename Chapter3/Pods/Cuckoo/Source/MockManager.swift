@@ -9,25 +9,25 @@
 import XCTest
 
 public class MockManager {
-    static var fail: (_ message: String, _ sourceLocation: SourceLocation) -> () = { XCTFail($0, file: $1.file, line: $1.line) }
-    
+    static var fail: (_ message: String, _ sourceLocation: SourceLocation) -> Void = { XCTFail($0, file: $1.file, line: $1.line) }
+
     private var stubs: [Stub] = []
     private var stubCalls: [StubCall] = []
     private var unverifiedStubCallsIndexes: [Int] = []
-    
+
     public init() {
-        
+
     }
 
     fileprivate func callInternal<IN, OUT>(_ method: String, parameters: IN, original: ((IN) -> OUT)? = nil) -> OUT {
         return try! callThrowsInternal(method, parameters: parameters, original: original)
     }
-    
+
     fileprivate func callThrowsInternal<IN, OUT>(_ method: String, parameters: IN, original: ((IN) throws -> OUT)? = nil) throws -> OUT {
         let stubCall = ConcreteStubCall(method: method, parameters: parameters)
         stubCalls.append(stubCall)
         unverifiedStubCallsIndexes.append(stubCalls.count - 1)
-        
+
         if let stub = (stubs.filter { $0.method == method }.flatMap { $0 as? ConcreteStub<IN, OUT> }.filter { $0.parameterMatchers.reduce(true) { $0 && $1.matches(parameters) } }.first) {
             if let action = stub.actions.first {
                 if stub.actions.count > 1 {
@@ -57,45 +57,45 @@ public class MockManager {
             failAndCrash("No stub for method `\(method)` using parameters \(parameters) and no original implementation was provided.")
         }
     }
-    
+
     public func createStub<IN, OUT>(_ method: String, parameterMatchers: [ParameterMatcher<IN>]) -> ConcreteStub<IN, OUT> {
         let stub = ConcreteStub<IN, OUT>(method: method, parameterMatchers: parameterMatchers)
         stubs.insert(stub, at: 0)
         return stub
     }
-    
+
     public func verify<IN, OUT>(_ method: String, callMatcher: CallMatcher, parameterMatchers: [ParameterMatcher<IN>], sourceLocation: SourceLocation) -> __DoNotUse<OUT> {
         var calls: [StubCall] = []
         var indexesToRemove: [Int] = []
         for (i, stubCall) in stubCalls.enumerated() {
-            if let stubCall = stubCall as? ConcreteStubCall<IN> , (parameterMatchers.reduce(stubCall.method == method) { $0 && $1.matches(stubCall.parameters) }) {
+            if let stubCall = stubCall as? ConcreteStubCall<IN>, (parameterMatchers.reduce(stubCall.method == method) { $0 && $1.matches(stubCall.parameters) }) {
                 calls.append(stubCall)
                 indexesToRemove.append(i)
             }
         }
         unverifiedStubCallsIndexes = unverifiedStubCallsIndexes.filter { !indexesToRemove.contains($0) }
-        
+
         if callMatcher.matches(calls) == false {
             let message = "Wanted \(callMatcher.name) but \(calls.count == 0 ? "not invoked" : "invoked \(calls.count) times")."
             MockManager.fail(message, sourceLocation)
         }
         return __DoNotUse()
     }
-    
+
     func reset() {
         clearStubs()
         clearInvocations()
     }
-    
+
     func clearStubs() {
         stubs.removeAll()
     }
-    
+
     func clearInvocations() {
         stubCalls.removeAll()
         unverifiedStubCallsIndexes.removeAll()
     }
-    
+
     func verifyNoMoreInteractions(_ sourceLocation: SourceLocation) {
         if unverifiedStubCallsIndexes.isEmpty == false {
             let unverifiedCalls = unverifiedStubCallsIndexes.map { stubCalls[$0] }.map { call in
@@ -114,9 +114,8 @@ public class MockManager {
             MockManager.fail(message + unverifiedCalls, sourceLocation)
         }
     }
-    
-    
-    private func failAndCrash(_ message: String, file: StaticString = #file, line: UInt = #line) -> Never  {
+
+    private func failAndCrash(_ message: String, file: StaticString = #file, line: UInt = #line) -> Never {
         MockManager.fail(message, (file, line))
         fatalError(message)
     }
@@ -201,21 +200,3 @@ extension MockManager {
         return try callThrowsInternal(method, parameters: parameters, original: original)
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

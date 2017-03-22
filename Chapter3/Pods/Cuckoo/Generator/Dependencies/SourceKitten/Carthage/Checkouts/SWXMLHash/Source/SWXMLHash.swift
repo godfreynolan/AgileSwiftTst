@@ -59,7 +59,7 @@ public class SWXMLHash {
         options to be set
     - returns: an `SWXMLHash` instance
     */
-    class public func config(_ configAction: (SWXMLHashOptions) -> ()) -> SWXMLHash {
+    class public func config(_ configAction: (SWXMLHashOptions) -> Void) -> SWXMLHash {
         let opts = SWXMLHashOptions()
         configAction(opts)
         return SWXMLHash(opts)
@@ -416,7 +416,6 @@ public enum XMLIndexer: Sequence {
     case Stream(IndexOps)
     case XMLError(IndexingError)
 
-
     /// The underlying XMLElement at the currently indexed level of XML.
     public var element: XMLElement? {
         switch self {
@@ -707,7 +706,7 @@ public class XMLElement: XMLContent {
         return attrMap
     }
 
-    public var allAttributes = [String:XMLAttribute]()
+    public var allAttributes = [String: XMLAttribute]()
 
     public func attribute(by name: String) -> XMLAttribute? {
         return allAttributes[name]

@@ -355,7 +355,7 @@ extension Path {
     ///
     /// - Parameter closure: The block to run while `Path.Current` is changed.
     ///
-    public func changeDirectory(_ closure: () throws -> ()) rethrows {
+    public func changeDirectory(_ closure: () throws -> Void) rethrows {
         let previous = Path.current
         defer { Path.current = previous }
         if _fmWraper.fileManager.changeCurrentDirectoryPath(_safeRawValue) {
@@ -852,7 +852,7 @@ extension Path {
 
     /// Modify one attribute
     fileprivate func _setAttribute(_ key: FileAttributeKey, value: Any) throws {
-        try _setAttributes([key : value])
+        try _setAttributes([key: value])
     }
 
     /// The creation date of the file at the path.
@@ -1123,7 +1123,6 @@ extension Path: Sequence {
     }
 
 }
-
 
 extension Path {
 

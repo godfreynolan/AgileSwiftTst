@@ -36,10 +36,6 @@ static func regex (_ pattern: String, options: String = "") -> NSRegularExpressi
   return try? NSRegularExpression(pattern: pattern, options: opts)
 }
 
-
-
-
-
 static func replace (_ regex: NSRegularExpression, template: String) -> (String)
     -> String {
       return { string in

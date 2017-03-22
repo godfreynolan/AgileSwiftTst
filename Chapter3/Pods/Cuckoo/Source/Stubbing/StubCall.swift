@@ -14,7 +14,7 @@ public protocol StubCall {
 public struct ConcreteStubCall<IN>: StubCall {
     public let method: String
     public let parameters: IN
-    
+
     public var parametersAsString: String {
         let string = String(describing: parameters)
         if (string.range(of: ",") != nil && string.hasPrefix("(")) || string == "()" {
@@ -25,7 +25,7 @@ public struct ConcreteStubCall<IN>: StubCall {
             return wrappedParameter.substring(to: wrappedParameter.characters.index(wrappedParameter.endIndex, offsetBy: -4)) + ")"
         }
     }
-    
+
     public init(method: String, parameters: IN) {
         self.method = method
         self.parameters = parameters

@@ -203,14 +203,14 @@ open class TextFileStreamReader {
     }
 
     /// Start reading from the beginning of file.
-    open func rewind() -> Void {
+    open func rewind() {
         fileHandle?.seek(toFileOffset: 0)
         buffer.length = 0
         atEOF = false
     }
 
     /// Close the underlying file. No reading must be done after calling this method.
-    open func close() -> Void {
+    open func close() {
         fileHandle?.closeFile()
     }
 

@@ -2,7 +2,6 @@ import Foundation
 
 private typealias Resulter = Yaml
 
-
 extension Yaml {
 
 struct Context {
@@ -23,11 +22,11 @@ struct Context {
       >>=- expect(Yaml.TokenType.end, message: "expected end")
       >>| v
   }
-  
+
   static func parseDocs (_ tokens: [Yaml.TokenMatch]) -> Result<[Yaml]> {
     return parseDocs([])(Context(tokens))
   }
-  
+
   static func parseDocs (_ acc: [Yaml]) -> (Context) -> Result<[Yaml]> {
     return { context in
       if peekType(context) == .end {
@@ -45,15 +44,13 @@ struct Context {
       return parseDocs <^> a <*> c |> Resulter.join
     }
   }
-  
+
   static func error (_ message: String) -> (Context) -> String {
     return { context in
       let text = recreateText("", context: context) |> Yaml.escapeErrorContext
       return "\(message), \(text)"
     }
   }
-
-  
 
 }
 
@@ -77,16 +74,13 @@ private func getValue (_ cv: ContextValue) -> Yaml {
   return cv.value
 }
 
-
 private func peekType (_ context: Context) -> Yaml.TokenType {
   return context.tokens[0].type
 }
 
-
 private func peekMatch (_ context: Context) -> String {
   return context.tokens[0].match
 }
-
 
 private func advance (_ context: Context) -> Context {
   var tokens = context.tokens
@@ -122,7 +116,6 @@ private func expectVersion (_ context: Context) -> Result<Context> {
   return Resulter.`guard`(error("invalid yaml version")(context), check: check)
       >>| Resulter.lift(advance(context))
 }
-
 
 private func recreateText (_ string: String, context: Context) -> String {
   if string.characters.count >= 50 || peekType(context) == .end {
@@ -334,7 +327,6 @@ private func parseFlowSeq (_ acc: [Yaml]) -> (Context) -> Result<ContextValue> {
   }
 }
 
-
 private func parseFlowMap (_ context: Context) -> Result<ContextValue> {
   return Resulter.lift(context)
       >>=- expect(Yaml.TokenType.openCB, message: "expected {")
@@ -485,7 +477,6 @@ private func parseString (_ context: Context) -> Result<ContextValue> {
   }
 }
 
-
 private func parseBlockMapOrString (_ context: Context) -> Result<ContextValue> {
   let match = peekMatch(context)
   // should spaces before colon be ignored?
@@ -559,7 +550,6 @@ private func parseliteral (_ context: Context) -> Result<ContextValue> {
       >>- { context in (context, .string(trimmed))}
 }
 
-
 private func parseInt (_ string: String, radix: Int) -> Int {
   let (sign, str) = Yaml.Regex.splitLead(Yaml.Regex.regex("^[-+]"))(string)
   let multiplier = (sign == "-" ? -1 : 1)
@@ -601,14 +591,10 @@ private func unescapeSingleQuotes (_ s: String) -> String {
 
 private func unescapeDoubleQuotes (_ input: String) -> String {
   return input
-    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\([0abtnvfre \"\\/N_LP])"))
-        { escapeCharacters[$0[1]] ?? "" }
-    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\x([0-9A-Fa-f]{2})"))
-        { String(describing: UnicodeScalar(parseInt($0[1], radix: 16))) }
-    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\u([0-9A-Fa-f]{4})"))
-        { String(describing: UnicodeScalar(parseInt($0[1], radix: 16))) }
-    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\U([0-9A-Fa-f]{8})"))
-        { String(describing: UnicodeScalar(parseInt($0[1], radix: 16))) }
+    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\([0abtnvfre \"\\/N_LP])")) { escapeCharacters[$0[1]] ?? "" }
+    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\x([0-9A-Fa-f]{2})")) { String(describing: UnicodeScalar(parseInt($0[1], radix: 16))) }
+    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\u([0-9A-Fa-f]{4})")) { String(describing: UnicodeScalar(parseInt($0[1], radix: 16))) }
+    |> Yaml.Regex.replace(Yaml.Regex.regex("\\\\U([0-9A-Fa-f]{8})")) { String(describing: UnicodeScalar(parseInt($0[1], radix: 16))) }
 }
 
 private let escapeCharacters = [

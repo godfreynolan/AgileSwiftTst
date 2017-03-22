@@ -17,7 +17,6 @@ final class ResultTests: XCTestCase {
 		XCTAssert(Result(nil, failWith: error) == failure)
 	}
 
-
 	// MARK: Errors
 
 	func testErrorsIncludeTheSourceFile() {
@@ -36,12 +35,12 @@ final class ResultTests: XCTestCase {
 	}
 
 	// MARK: Try - Catch
-	
+
 	func testTryCatchProducesSuccesses() {
 		let result: Result<String, NSError> = Result(try tryIsSuccess("success"))
 		XCTAssert(result == success)
 	}
-	
+
 	func testTryCatchProducesFailures() {
 		#if os(Linux)
 			/// FIXME: skipped on Linux because of crash with swift-3.0-PREVIEW-4.
@@ -199,7 +198,6 @@ final class ResultTests: XCTestCase {
 	}
 }
 
-
 // MARK: - Fixtures
 
 let success = Result<String, NSError>.success("success")
@@ -207,7 +205,6 @@ let error = NSError(domain: "com.antitypical.Result", code: 1, userInfo: nil)
 let error2 = NSError(domain: "com.antitypical.Result", code: 2, userInfo: nil)
 let failure = Result<String, NSError>.failure(error)
 let failure2 = Result<String, NSError>.failure(error2)
-
 
 // MARK: - Helpers
 
@@ -236,7 +233,7 @@ extension NSError {
 	var function: String? {
 		return userInfo[Result<(), NSError>.functionKey] as? String
 	}
-	
+
 	var file: String? {
 		return userInfo[Result<(), NSError>.fileKey] as? String
 	}

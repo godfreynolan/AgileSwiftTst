@@ -162,7 +162,7 @@ extension CXCursor {
 
     func flatMap<T>(_ block: @escaping (CXCursor) -> T?) -> [T] {
         var ret = [T]()
-        visit() { cursor, _ in
+        visit { cursor, _ in
             if let val = block(cursor) {
                 ret.append(val)
             }
@@ -226,7 +226,7 @@ extension CXComment {
     func paragraphToString(kindString: String? = nil) -> [Text] {
         if kind() == CXComment_VerbatimLine {
             return [.Verbatim(clang_VerbatimLineComment_getText(self).str()!)]
-        } else if kind() == CXComment_BlockCommand  {
+        } else if kind() == CXComment_BlockCommand {
             return (0..<count()).reduce([]) { returnValue, childIndex in
                 return returnValue + self[childIndex].paragraphToString()
             }

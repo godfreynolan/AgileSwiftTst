@@ -7,20 +7,20 @@
 //
 
 public struct Generator {
-    
+
     private let declarations: [Token]
     private let code = CodeBuilder()
-    
+
     public init(file: FileRepresentation) {
         declarations = file.declarations
     }
-    
+
     public func generate() -> String {
         code.clear()
         declarations.forEach { generate(for: $0, withOuterAccessibility: .Internal) }
         return code.code
     }
-    
+
     private func generate(for token: Token, withOuterAccessibility outerAccessibility: Accessibility) {
         switch token {
         case let containerToken as ContainerToken:
@@ -37,7 +37,7 @@ public struct Generator {
 
     private func generateClass(for token: ContainerToken) {
         guard token.accessibility.isAccessible else { return }
-        
+
         code += ""
         code += "\(token.accessibility.sourceName)class \(mockClassName(of: token.name)): \(token.name), Cuckoo.Mock {"
         code.nest {
@@ -93,16 +93,16 @@ public struct Generator {
         }
         code += "}"
     }
-    
+
     private func generateMethod(for token: Method, withOuterAccessibility outerAccessibility: Accessibility) {
         guard token.accessibility.isAccessible else { return }
         guard !token.isInit else { return }
-        
+
         let override = token is ClassMethod ? "override " : ""
         let parametersSignature = token.parameters.enumerated().map { "\($1.labelAndName): \($1.type)" }.joined(separator: ", ")
 
         let parametersSignatureWithoutNames = token.parameters.map { "\($0.name): \($0.type)" }.joined(separator: ", ")
-        
+
         var managerCall: String
         let tryIfThrowing: String
         if token.isThrowing {
@@ -121,14 +121,14 @@ public struct Generator {
                 }
             }.joined(separator: ", ")
         managerCall += ", original: observed.map { o in return { (\(parametersSignatureWithoutNames))\(token.returnSignature) in \(tryIfThrowing)o.\(token.rawName)(\(methodCall)) } })"
-        
+
         let accessibility = minAccessibility(token.accessibility, outerAccessibility)
         code += ""
         code += "\(accessibility.sourceName)\(override)\(token.isInit ? "" : "func " )\(token.rawName)(\(parametersSignature))\(token.returnSignature) {"
         code.nest("return \(managerCall)")
         code += "}"
     }
-    
+
     private func generateStubbing(for token: Token) {
         switch token {
         case let containerToken as ContainerToken:
@@ -141,10 +141,10 @@ public struct Generator {
             break
         }
     }
-    
+
     private func generateStubbingClass(for token: ContainerToken) {
         guard token.accessibility.isAccessible else { return }
-        
+
         code += "\(token.accessibility.sourceName)struct \(stubbingProxyName(of: token.name)): Cuckoo.StubbingProxy {"
         code.nest {
             code += "private let manager: Cuckoo.MockManager"
@@ -156,22 +156,22 @@ public struct Generator {
         }
         code += "}"
     }
-    
+
     private func generateStubbingProperty(for token: InstanceVariable) {
         guard token.accessibility.isAccessible else { return }
-        
+
         let propertyType = token.readOnly ? "Cuckoo.ToBeStubbedReadOnlyProperty" : "Cuckoo.ToBeStubbedProperty"
-        
+
         code += ""
         code += "var \(token.name): \(propertyType)<\(genericSafeType(from: token.type))> {"
         code.nest("return \(propertyType)(manager: manager, name: \"\(token.name)\")")
         code += "}"
     }
-    
+
     private func generateStubbingMethod(for token: Method) {
         guard token.accessibility.isAccessible else { return }
         guard !token.isInit else { return }
-        
+
         let stubFunction: String
         if token.isThrowing {
             if token.returnType == "Void" {
@@ -186,7 +186,7 @@ public struct Generator {
                 stubFunction = "Cuckoo.StubFunction"
             }
         }
-        
+
         let inputTypes = token.parameters.map { $0.typeWithoutAttributes }.joined(separator: ", ")
         var returnType = "\(stubFunction)<(\(genericSafeType(from: inputTypes)))"
         if token.returnType != "Void" {
@@ -194,7 +194,7 @@ public struct Generator {
             returnType += genericSafeType(from: token.returnType)
         }
         returnType += ">"
-        
+
         code += ""
         code += ("\(token.accessibility.sourceName)func \(token.rawName)\(matchableGenerics(with: token.parameters))" +
             "(\(matchableParameterSignature(with: token.parameters))) -> \(returnType)\(matchableGenerics(where: token.parameters)) {")
@@ -208,7 +208,7 @@ public struct Generator {
         code.nest("return \(stubFunction)(stub: manager.createStub(\"\(token.fullyQualifiedName)\", parameterMatchers: \(matchers)))")
         code += "}"
     }
-    
+
     private func generateVerification(for token: Token) {
         switch token {
         case let containerToken as ContainerToken:
@@ -221,10 +221,10 @@ public struct Generator {
             break
         }
     }
-    
+
     private func generateVerificationClass(for token: ContainerToken) {
         guard token.accessibility.isAccessible else { return }
-        
+
         code += "\(token.accessibility.sourceName)struct \(verificationProxyName(of: token.name)): Cuckoo.VerificationProxy {"
         code.nest {
             code += "private let manager: Cuckoo.MockManager"
@@ -242,22 +242,22 @@ public struct Generator {
         }
         code += "}"
     }
-    
+
     private func generateVerificationProperty(for token: InstanceVariable) {
         guard token.accessibility.isAccessible else { return }
-        
+
         let propertyType = token.readOnly ? "Cuckoo.VerifyReadOnlyProperty" : "Cuckoo.VerifyProperty"
-        
+
         code += ""
         code += "var \(token.name): \(propertyType)<\(genericSafeType(from: token.type))> {"
         code.nest("return \(propertyType)(manager: manager, name: \"\(token.name)\", callMatcher: callMatcher, sourceLocation: sourceLocation)")
         code += "}"
     }
-    
+
     private func generateVerificationMethod(for token: Method) {
         guard token.accessibility.isAccessible else { return }
         guard !token.isInit else { return }
-        
+
         code += ""
         code += "@discardableResult"
         code += ("\(token.accessibility.sourceName)func \(token.rawName)\(matchableGenerics(with: token.parameters))" +
@@ -272,10 +272,10 @@ public struct Generator {
         code.nest("return manager.verify(\"\(token.fullyQualifiedName)\", callMatcher: callMatcher, parameterMatchers: \(matchers), sourceLocation: sourceLocation)")
         code += "}"
     }
-    
+
     private func generateNoImplStubClass(for token: ContainerToken) {
         guard token.accessibility.isAccessible else { return }
-        
+
         code += ""
         code += "\(token.accessibility.sourceName)class \(stubClassName(of: token.name)): \(token.name) {"
         code.nest {
@@ -283,7 +283,7 @@ public struct Generator {
         }
         code += "}"
     }
-    
+
     private func generateNoImplStub(for token: Token, withOuterAccessibility outerAccessibility: Accessibility) {
         switch token {
         case let property as InstanceVariable:
@@ -297,7 +297,7 @@ public struct Generator {
 
     private func generateNoImplStubProperty(for token: InstanceVariable, withOuterAccessibility outerAccessibility: Accessibility) {
         guard token.accessibility.isAccessible else { return }
-        
+
         let accessibility = minAccessibility(token.accessibility, outerAccessibility)
         code += ""
         code += "\(accessibility.sourceName)\(token.overriding ? "override " : "")var \(token.name): \(token.type) {"
@@ -312,65 +312,65 @@ public struct Generator {
         }
         code += "}"
     }
-    
+
     private func generateNoImplStubMethod(for token: Method, withOuterAccessibility outerAccessibility: Accessibility) {
         guard token.accessibility.isAccessible else { return }
         guard !token.isInit else { return }
-        
+
         let override = token is ClassMethod ? "override " : ""
         let parametersSignature = token.parameters.enumerated().map { "\($1.labelAndName): \($1.type)" }.joined(separator: ", ")
-        
+
         let accessibility = minAccessibility(token.accessibility, outerAccessibility)
         code += ""
         code += "\(accessibility.sourceName)\(override)func \(token.rawName)(\(parametersSignature))\(token.returnSignature) {"
         code.nest("return DefaultValueRegistry.defaultValue(for: (\(token.returnType)).self)")
         code += "}"
     }
-    
+
     private func mockClassName(of originalName: String) -> String {
         return "Mock" + originalName
     }
-    
+
     private func stubClassName(of originalName: String) -> String {
         return originalName + "Stub"
     }
-    
+
     private func stubbingProxyName(of originalName: String) -> String {
         return "__StubbingProxy_" + originalName
     }
-    
+
     private func verificationProxyName(of originalName: String) -> String {
         return "__VerificationProxy_" + originalName
     }
-    
+
     private func matchableGenerics(with parameters: [MethodParameter]) -> String {
         guard parameters.isEmpty == false else { return "" }
-        
+
         let genericParameters = (1...parameters.count).map { "M\($0): Cuckoo.Matchable" }.joined(separator: ", ")
         return "<\(genericParameters)>"
     }
-    
+
     private func matchableGenerics(where parameters: [MethodParameter]) -> String {
         guard parameters.isEmpty == false else { return "" }
-        
+
         let whereClause = parameters.enumerated().map { "M\($0 + 1).MatchedType == \(genericSafeType(from: $1.typeWithoutAttributes))" }.joined(separator: ", ")
         return " where \(whereClause)"
     }
-    
+
     private func matchableParameterSignature(with parameters: [MethodParameter]) -> String {
         guard parameters.isEmpty == false else { return "" }
-        
+
         return parameters.enumerated().map { "\($1.labelAndName): M\($0 + 1)" }.joined(separator: ", ")
     }
-    
+
     private func parameterMatchers(for parameters: [MethodParameter]) -> String {
         guard parameters.isEmpty == false else { return "" }
-        
+
         let tupleType = parameters.map { $0.typeWithoutAttributes }.joined(separator: ", ")
         let matchers = parameters.enumerated().map { "wrap(matchable: \($1.name)) { $0\(parameters.count > 1 ? ".\($0)" : "") }" }.joined(separator: ", ")
         return "let matchers: [Cuckoo.ParameterMatcher<(\(genericSafeType(from: tupleType)))>] = [\(matchers)]"
     }
-    
+
     private func genericSafeType(from type: String) -> String {
         return type.replacingOccurrences(of: "!", with: "?")
     }
