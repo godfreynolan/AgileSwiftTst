@@ -31,11 +31,11 @@ class CalculatorTests: XCTestCase {
         }
     }
     
-    func testMockNumbers(){
-        let mock = MockCalculatorModel().spy(on: CalculatorModel())
-        mock.a = 5
-        mock.b = 5
-        
-        XCTAssertEqual(mock.add(mock.a, mock.b), 10)
-    }
+//    func testMockNumbers(){
+//        let mock = MockCalculatorModel().spy(on: CalculatorModel())
+//        mock.a = 5
+//        mock.b = 5
+//        
+//        XCTAssertEqual(mock.add(mock.a, mock.b), 10)
+//    }
 }
