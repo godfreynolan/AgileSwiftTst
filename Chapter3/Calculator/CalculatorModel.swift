@@ -10,25 +10,25 @@ import Foundation
 
 class CalculatorModel {
 
-    var a: Int!
-    var b: Int!
+    var operandOne: Int!
+    var operandTwo: Int!
 
-    func add(_ a: Int, _ b: Int) -> Int {
-        return a + b
+    func add(_ operandOne: Int, _ operandTwo: Int) -> Int {
+        return operandOne + operandTwo
     }
 
-    func sub(_ a: Int, _ b: Int) -> Int {
-        return a - b
+    func sub(_ operandOne: Int, _ operandTwo: Int) -> Int {
+        return operandOne - operandTwo
     }
 
-    func mul(_ a: Int, _ b: Int) -> Int {
-        return a * b
+    func mul(_ operandOne: Int, _ operandTwo: Int) -> Int {
+        return operandOne * operandTwo
     }
 
-    func div(_ a: Int, _ b: Int) -> Int {
-        guard b != 0 else {
+    func div(_ operandOne: Int, _ operandTwo: Int) -> Int {
+        guard operandTwo != 0 else {
             return 0
         }
-        return a / b
+        return operandOne / operandTwo
     }
 }
