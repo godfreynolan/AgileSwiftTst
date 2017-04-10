@@ -29,5 +29,11 @@ class CalculatorUITests: XCTestCase {
     }
 
     func testExample() {
+        let app = XCUIApplication()
+        app.buttons["5"].tap()
+        app.buttons["*"].tap()
+        app.buttons["3"].tap()
+        app.buttons["="].tap()
+        XCTAssertTrue(XCUIApplication().otherElements.containing(.button, identifier:"7").children(matching: .textField).element.value as! String == "15")
     }
 }
